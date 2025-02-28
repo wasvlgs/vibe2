@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Post;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
+
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -22,9 +22,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
+
     public function update(ProfileUpdateRequest $request): RedirectResponse
 {
     $user = $request->user();
@@ -87,5 +85,11 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function show(User $user)
+    {
+        $posts = $user->posts()->with('likes', 'comments', 'user')->latest()->get();
+        return view('profile.show', compact('user', 'posts'));
     }
 }

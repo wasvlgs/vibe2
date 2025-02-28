@@ -3,6 +3,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -50,5 +52,25 @@ Route::middleware('auth')->group(function () {
 
 
 });
+
+use App\Http\Controllers\PostController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [PostController::class, 'index'])->name('dashboard');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
+    Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
+});
+
+
+Route::post('/posts/{post}/like', [LikeController::class, 'likePost'])->name('posts.like');
+Route::post('/posts/{post}/unlike', [LikeController::class, 'unlikePost'])->name('posts.unlike');
+
+
+Route::post('/posts/{post}/comment', [CommentController::class, 'store'])->name('posts.comment');
+
+
+Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
+
 
 require __DIR__.'/auth.php';
